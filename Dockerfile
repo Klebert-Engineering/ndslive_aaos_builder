@@ -32,13 +32,14 @@ RUN apt-get install -y gcc-aarch64-linux-gnu
 
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y repo
 
+WORKDIR /nds_aaos
+
 # Init repositories
-RUN mkdir -p /nds_aaos && cd /nds_aaos && \
-    git config --global user.name "Klebert Engineering Team" && \
+CMD git config --global user.name "Klebert Engineering Team" && \
     git config --global user.email "team@klebert-engineering.de" && \
     DEBIAN_FRONTEND="noninteractive" repo init -u https://android.googlesource.com/platform/manifest -b android11-qpr3-release && \
     git clone https://github.com/klebert-engineering/ndslive_aaos_rpi-local_manifests .repo/local_manifests -b ke-main && \
-    repo sync
+    repo sync -c -j8
 
 # Manual patching as done in https://github.com/android-rpi/device_arpi_rpi4/wiki/arpi-11-:-framework-patch
 
@@ -56,5 +57,5 @@ RUN mkdir -p /nds_aaos && cd /nds_aaos && \
 
 # source build/envsetup.sh
 # lunch ndslive_car_rpi4-userdebug
-# make -j18 ramdisk systemimage vendorimage
+# make -j8 ramdisk systemimage vendorimage
 
